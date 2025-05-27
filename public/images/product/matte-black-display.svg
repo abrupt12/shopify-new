@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#F5F5F5"/>
+  
+  <!-- Frame -->
+  <rect x="100" y="50" width="600" height="500" rx="20" fill="#1A1A1A"/>
+  
+  <!-- Screen -->
+  <rect x="120" y="70" width="560" height="460" rx="10" fill="#222222"/>
+  
+  <!-- UI Elements -->
+  <rect x="140" y="90" width="520" height="80" rx="8" fill="#2A2A2A"/>
+  <rect x="140" y="190" width="250" height="320" rx="8" fill="#2A2A2A"/>
+  <rect x="410" y="190" width="250" height="150" rx="8" fill="#2A2A2A"/>
+  <rect x="410" y="360" width="250" height="150" rx="8" fill="#2A2A2A"/>
+  
+  <!-- Calendar Icons -->
+  <rect x="160" y="110" width="40" height="40" rx="20" fill="#333333"/>
+  <rect x="220" y="110" width="40" height="40" rx="20" fill="#333333"/>
+  <rect x="280" y="110" width="40" height="40" rx="20" fill="#333333"/>
+  
+  <!-- Text Label -->
+  <text x="400" y="550" font-family="Arial" font-size="18" fill="#FFFFFF" text-anchor="middle">Matte Black Frame</text>
+</svg> 

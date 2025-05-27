@@ -1,0 +1,121 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Lumora",
+    "theme_version": "1.0.0",
+    "theme_author": "Lumora Team",
+    "theme_documentation_url": "https://docs.lumora.com",
+    "theme_support_url": "https://support.lumora.com"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary Color",
+        "default": "#003545"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary Color",
+        "default": "#00796B"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent Color",
+        "default": "#00FFD5"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background Color",
+        "default": "#F9F7F4"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading Font",
+        "default": "sora_n7"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body Font",
+        "default": "plus_jakarta_sans_n4"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "select",
+        "id": "layout_width",
+        "label": "Page Width",
+        "options": [
+          {
+            "value": "1280px",
+            "label": "Standard (1280px)"
+          },
+          {
+            "value": "1440px",
+            "label": "Wide (1440px)"
+          },
+          {
+            "value": "1680px",
+            "label": "Extra Wide (1680px)"
+          }
+        ],
+        "default": "1280px"
+      }
+    ]
+  },
+  {
+    "name": "Social Media",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_twitter_link",
+        "label": "Twitter",
+        "info": "https://twitter.com/youraccount"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook",
+        "info": "https://facebook.com/youraccount"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram",
+        "info": "https://instagram.com/youraccount"
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "cart_notes_enable",
+        "label": "Enable Cart Notes",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_drawer_enable",
+        "label": "Enable Cart Drawer",
+        "default": true
+      }
+    ]
+  }
+] 
