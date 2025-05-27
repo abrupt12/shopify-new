@@ -1,0 +1,41 @@
+{% if section.settings.show_announcement %}
+  <div class="bg-primary text-white px-4 py-2 text-center text-sm">
+    {{ section.settings.announcement_text }}
+    {% if section.settings.announcement_link != blank %}
+      <a href="{{ section.settings.announcement_link }}" class="underline ml-2">
+        {{ section.settings.announcement_link_text }}
+      </a>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Announcement Bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Announcement text",
+      "default": "Welcome to our store"
+    },
+    {
+      "type": "url",
+      "id": "announcement_link",
+      "label": "Announcement link"
+    },
+    {
+      "type": "text",
+      "id": "announcement_link_text",
+      "label": "Link text",
+      "default": "Learn more"
+    }
+  ]
+}
+{% endschema %} 

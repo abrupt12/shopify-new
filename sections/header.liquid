@@ -1,0 +1,47 @@
+<header class="bg-white shadow-sm">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        {% if section.settings.logo != blank %}
+          <img src="{{ section.settings.logo | img_url: '200x' }}" alt="{{ shop.name }}" class="h-8">
+        {% else %}
+          <span class="text-xl font-bold">{{ shop.name }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Navigation -->
+      <nav class="hidden md:flex space-x-8">
+        {% for link in section.settings.menu.links %}
+          <a href="{{ link.url }}" class="text-gray-700 hover:text-primary">{{ link.title }}</a>
+        {% endfor %}
+      </nav>
+
+      <!-- Cart -->
+      <div class="flex items-center">
+        <a href="/cart" class="text-gray-700 hover:text-primary">
+          Cart ({{ cart.item_count }})
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %} 

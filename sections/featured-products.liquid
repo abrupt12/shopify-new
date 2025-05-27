@@ -1,0 +1,71 @@
+<div class="bg-white py-16">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-12">{{ section.settings.title }}</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      {% for product in collections[section.settings.collection].products limit: section.settings.products_to_show %}
+        <div class="group">
+          <a href="{{ product.url }}" class="block">
+            <div class="relative aspect-square mb-4">
+              <img src="{{ product.featured_image | img_url: '500x' }}" alt="{{ product.title }}" class="w-full h-full object-cover">
+            </div>
+            <h3 class="text-lg font-medium mb-2">{{ product.title }}</h3>
+            <p class="text-gray-900">{{ product.price | money }}</p>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+    
+    {% if section.settings.view_all_link != blank %}
+      <div class="text-center mt-12">
+        <a href="{{ section.settings.view_all_link }}" class="inline-block bg-primary text-white px-8 py-3 rounded-lg hover:bg-opacity-90 transition-colors">
+          {{ section.settings.view_all_text }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Featured Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 12,
+      "step": 4,
+      "label": "Products to show",
+      "default": 4
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View all link"
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View all text",
+      "default": "View All Products"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Products"
+    }
+  ]
+}
+{% endschema %} 
