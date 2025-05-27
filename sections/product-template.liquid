@@ -1,0 +1,121 @@
+<div class="py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+      <!-- Product Images -->
+      <div class="relative">
+        {% if product.featured_image %}
+          <img 
+            src="{{ product.featured_image | img_url: '1000x' }}" 
+            alt="{{ product.featured_image.alt | escape }}"
+            class="w-full rounded-lg"
+            id="ProductMainImage"
+          >
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag: 'w-full rounded-lg' }}
+        {% endif %}
+        
+        {% if product.images.size > 1 %}
+          <div class="mt-4 grid grid-cols-4 gap-4">
+            {% for image in product.images %}
+              <button 
+                class="aspect-square rounded-lg overflow-hidden border-2 {% if forloop.first %}border-primary{% else %}border-transparent{% endif %} hover:border-primary transition-colors"
+                onclick="document.getElementById('ProductMainImage').src = '{{ image | img_url: '1000x' }}'"
+              >
+                <img 
+                  src="{{ image | img_url: '150x' }}" 
+                  alt="{{ image.alt | escape }}"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                >
+              </button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Product Info -->
+      <div>
+        <h1 class="text-4xl font-bold mb-4">{{ product.title }}</h1>
+        
+        <div class="mb-6">
+          {% if product.compare_at_price > product.price %}
+            <span class="text-3xl text-primary">{{ product.price | money }}</span>
+            <span class="text-xl text-gray-500 line-through ml-2">{{ product.compare_at_price | money }}</span>
+          {% else %}
+            <span class="text-3xl">{{ product.price | money }}</span>
+          {% endif %}
+        </div>
+
+        {% form 'product', product %}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+          {% if product.variants.size > 1 %}
+            {% for option in product.options_with_values %}
+              <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">
+                  {{ option.name }}
+                </label>
+                <select 
+                  name="options[{{ option.name | escape }}]"
+                  class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  data-option-index="{{ forloop.index0 }}"
+                >
+                  {% for value in option.values %}
+                    <option 
+                      value="{{ value | escape }}"
+                      {% if option.selected_value == value %}selected="selected"{% endif %}
+                    >
+                      {{ value }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2">
+              {{ 'products.product.quantity' | t }}
+            </label>
+            <input 
+              type="number" 
+              name="quantity" 
+              value="1" 
+              min="1"
+              class="w-32 border border-gray-300 rounded-lg px-4 py-2"
+            >
+          </div>
+
+          <button 
+            type="submit" 
+            name="add"
+            class="w-full bg-primary text-white px-8 py-3 rounded-lg hover:bg-opacity-90 transition-colors {% unless product.available %}opacity-50 cursor-not-allowed{% endunless %}"
+            {% unless product.available %}disabled{% endunless %}
+          >
+            {% if product.available %}
+              {{ 'products.product.add_to_cart' | t }}
+            {% else %}
+              {{ 'products.product.sold_out' | t }}
+            {% endif %}
+          </button>
+        {% endform %}
+
+        {% if product.description != blank %}
+          <div class="mt-8">
+            <h2 class="text-xl font-bold mb-4">Description</h2>
+            <div class="prose max-w-none">
+              {{ product.description }}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": []
+}
+{% endschema %} 

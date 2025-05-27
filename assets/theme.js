@@ -186,4 +186,105 @@
   // Make cart functions globally available for Shopify's Ajax API
   window.theme = window.theme || {};
   window.theme.cart = cart;
+
+  // Cart Drawer
+  function toggleCartDrawer() {
+    const cartDrawer = document.getElementById('CartDrawer');
+    if (cartDrawer) {
+      cartDrawer.classList.toggle('hidden');
+    }
+  }
+
+  // Product Form
+  document.addEventListener('DOMContentLoaded', function() {
+    const productForms = document.querySelectorAll('form[action="/cart/add"]');
+    
+    productForms.forEach(form => {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        
+        fetch('/cart/add.js', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(item => {
+          toggleCartDrawer();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+    });
+  });
+
+  // Product Variant Selector
+  document.addEventListener('DOMContentLoaded', function() {
+    const variantSelects = document.querySelectorAll('select[data-option-index]');
+    
+    if (variantSelects.length > 0) {
+      const productJson = document.getElementById('ProductJson-product-template');
+      if (productJson) {
+        const product = JSON.parse(productJson.innerHTML);
+        
+        function updateVariantId() {
+          const selectedOptions = [];
+          variantSelects.forEach(select => {
+            selectedOptions.push(select.value);
+          });
+          
+          const selectedVariant = product.variants.find(variant => {
+            return variant.options.every((option, index) => option === selectedOptions[index]);
+          });
+          
+          if (selectedVariant) {
+            document.querySelector('input[name="id"]').value = selectedVariant.id;
+            
+            // Update price
+            const priceElement = document.querySelector('.product-price');
+            if (priceElement) {
+              priceElement.innerHTML = formatMoney(selectedVariant.price);
+            }
+            
+            // Update availability
+            const addToCartButton = document.querySelector('button[name="add"]');
+            if (addToCartButton) {
+              if (selectedVariant.available) {
+                addToCartButton.disabled = false;
+                addToCartButton.textContent = theme.strings.addToCart;
+              } else {
+                addToCartButton.disabled = true;
+                addToCartButton.textContent = theme.strings.soldOut;
+              }
+            }
+          }
+        }
+        
+        variantSelects.forEach(select => {
+          select.addEventListener('change', updateVariantId);
+        });
+      }
+    }
+  });
+
+  // Collection Sort
+  document.addEventListener('DOMContentLoaded', function() {
+    const sortSelect = document.querySelector('.collection-sort');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', function(e) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sort_by', e.target.value);
+        window.location.href = url.toString();
+      });
+    }
+  });
+
+  // Format money
+  function formatMoney(cents) {
+    const formatString = theme.moneyFormat || '${{amount}}';
+    const value = (cents / 100).toFixed(2);
+    return formatString.replace('{{amount}}', value);
+  }
 })(); 
