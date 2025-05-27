@@ -1,114 +1,97 @@
-<div class="py-12">
-  <div class="container mx-auto px-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-      <!-- Product Images -->
-      <div class="relative">
-        {% if product.featured_image %}
-          <img 
-            src="{{ product.featured_image | img_url: '1000x' }}" 
-            alt="{{ product.featured_image.alt | escape }}"
-            class="w-full rounded-lg"
-            id="ProductMainImage"
-          >
-        {% else %}
-          {{ 'product-1' | placeholder_svg_tag: 'w-full rounded-lg' }}
-        {% endif %}
-        
-        {% if product.images.size > 1 %}
-          <div class="mt-4 grid grid-cols-4 gap-4">
-            {% for image in product.images %}
-              <button 
-                class="aspect-square rounded-lg overflow-hidden border-2 {% if forloop.first %}border-primary{% else %}border-transparent{% endif %} hover:border-primary transition-colors"
-                onclick="document.getElementById('ProductMainImage').src = '{{ image | img_url: '1000x' }}'"
-              >
-                <img 
-                  src="{{ image | img_url: '150x' }}" 
-                  alt="{{ image.alt | escape }}"
-                  class="w-full h-full object-cover"
-                  loading="lazy"
-                >
-              </button>
-            {% endfor %}
-          </div>
-        {% endif %}
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
+    <!-- Product gallery -->
+    <div class="flex flex-col">
+      <div class="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden">
+        {%- if product.featured_media -%}
+          <img src="{{ product.featured_media | img_url: 'large' }}"
+               alt="{{ product.featured_media.alt | escape }}"
+               class="w-full h-full object-center object-cover"
+               loading="lazy"
+               width="{{ product.featured_media.width }}"
+               height="{{ product.featured_media.height }}">
+        {%- endif -%}
       </div>
 
-      <!-- Product Info -->
-      <div>
-        <h1 class="text-4xl font-bold mb-4">{{ product.title }}</h1>
-        
-        <div class="mb-6">
-          {% if product.compare_at_price > product.price %}
-            <span class="text-3xl text-primary">{{ product.price | money }}</span>
-            <span class="text-xl text-gray-500 line-through ml-2">{{ product.compare_at_price | money }}</span>
-          {% else %}
-            <span class="text-3xl">{{ product.price | money }}</span>
-          {% endif %}
+      {%- if product.media.size > 1 -%}
+        <div class="mt-4 grid grid-cols-4 gap-4">
+          {%- for media in product.media -%}
+            <button class="relative rounded-lg overflow-hidden">
+              <img src="{{ media | img_url: 'medium' }}"
+                   alt="{{ media.alt | escape }}"
+                   class="w-full h-full object-center object-cover"
+                   loading="lazy"
+                   width="{{ media.width }}"
+                   height="{{ media.height }}">
+            </button>
+          {%- endfor -%}
         </div>
+      {%- endif -%}
+    </div>
 
-        {% form 'product', product %}
-          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+    <!-- Product info -->
+    <div class="mt-10 px-4 sm:px-0 sm:mt-16 lg:mt-0">
+      <h1 class="text-3xl font-bold tracking-tight text-gray-900">{{ product.title }}</h1>
 
-          {% if product.variants.size > 1 %}
-            {% for option in product.options_with_values %}
-              <div class="mb-6">
-                <label class="block text-sm font-medium mb-2">
-                  {{ option.name }}
-                </label>
-                <select 
-                  name="options[{{ option.name | escape }}]"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-2"
-                  data-option-index="{{ forloop.index0 }}"
-                >
-                  {% for value in option.values %}
-                    <option 
-                      value="{{ value | escape }}"
-                      {% if option.selected_value == value %}selected="selected"{% endif %}
-                    >
-                      {{ value }}
-                    </option>
-                  {% endfor %}
-                </select>
-              </div>
-            {% endfor %}
-          {% endif %}
-
-          <div class="mb-6">
-            <label class="block text-sm font-medium mb-2">
-              {{ 'products.product.quantity' | t }}
-            </label>
-            <input 
-              type="number" 
-              name="quantity" 
-              value="1" 
-              min="1"
-              class="w-32 border border-gray-300 rounded-lg px-4 py-2"
-            >
-          </div>
-
-          <button 
-            type="submit" 
-            name="add"
-            class="w-full bg-primary text-white px-8 py-3 rounded-lg hover:bg-opacity-90 transition-colors {% unless product.available %}opacity-50 cursor-not-allowed{% endunless %}"
-            {% unless product.available %}disabled{% endunless %}
-          >
-            {% if product.available %}
-              {{ 'products.product.add_to_cart' | t }}
-            {% else %}
-              {{ 'products.product.sold_out' | t }}
-            {% endif %}
-          </button>
-        {% endform %}
-
-        {% if product.description != blank %}
-          <div class="mt-8">
-            <h2 class="text-xl font-bold mb-4">Description</h2>
-            <div class="prose max-w-none">
-              {{ product.description }}
-            </div>
-          </div>
-        {% endif %}
+      <div class="mt-3">
+        <h2 class="sr-only">Product information</h2>
+        <p class="text-3xl tracking-tight text-gray-900">{{ current_variant.price | money }}</p>
       </div>
+
+      {%- if product.description != blank -%}
+        <div class="mt-6">
+          <h3 class="sr-only">Description</h3>
+          <div class="text-base text-gray-700 space-y-6">
+            {{ product.description }}
+          </div>
+        </div>
+      {%- endif -%}
+
+      <form method="post" action="/cart/add" id="product-form-{{ section.id }}" accept-charset="UTF-8" class="mt-6">
+        <input type="hidden" name="form_type" value="product">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+        {%- if product.variants.size > 1 -%}
+          {%- for option in product.options_with_values -%}
+            <div class="mt-8">
+              <div class="flex items-center justify-between">
+                <h3 class="text-sm font-medium text-gray-900">{{ option.name }}</h3>
+              </div>
+
+              <fieldset class="mt-4">
+                <legend class="sr-only">Choose {{ option.name }}</legend>
+                <div class="grid grid-cols-4 gap-4 sm:grid-cols-8">
+                  {%- for value in option.values -%}
+                    <label class="group relative border rounded-md py-3 px-4 flex items-center justify-center text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 cursor-pointer">
+                      <input type="radio"
+                             name="options[{{ option.name | escape }}]"
+                             value="{{ value | escape }}"
+                             class="sr-only"
+                             {% if option.selected_value == value %}checked{% endif %}>
+                      <span>{{ value }}</span>
+                    </label>
+                  {%- endfor -%}
+                </div>
+              </fieldset>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+
+        <div class="mt-10 flex">
+          <button type="submit"
+                  {% unless current_variant.available %}disabled{% endunless %}
+                  class="flex-1 bg-primary text-primary-foreground px-6 py-3 rounded-lg text-base font-semibold shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary {% unless current_variant.available %}opacity-50 cursor-not-allowed{% endunless %}">
+            {%- if current_variant.available -%}
+              Add to cart
+            {%- else -%}
+              Sold out
+            {%- endif -%}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

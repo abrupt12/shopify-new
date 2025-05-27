@@ -1,124 +1,67 @@
-<div class="py-12">
-  <div class="container mx-auto px-4">
-    <header class="mb-12">
-      <h1 class="text-4xl font-bold mb-4">{{ collection.title }}</h1>
-      {% if collection.description != blank %}
-        <div class="prose max-w-3xl">
-          {{ collection.description }}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">{{ collection.title }}</h1>
+    {%- if collection.description != blank -%}
+      <div class="mt-4 text-lg text-gray-500">{{ collection.description }}</div>
+    {%- endif -%}
+  </header>
+
+  {%- paginate collection.products by 24 -%}
+    <div class="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+      {%- for product in collection.products -%}
+        <a href="{{ product.url }}" class="group">
+          <div class="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden">
+            {%- if product.featured_media -%}
+              <img src="{{ product.featured_media | img_url: 'medium' }}"
+                   alt="{{ product.featured_media.alt | escape }}"
+                   class="w-full h-full object-center object-cover group-hover:opacity-75"
+                   loading="lazy"
+                   width="{{ product.featured_media.width }}"
+                   height="{{ product.featured_media.height }}">
+            {%- else -%}
+              {{ 'product-1' | placeholder_svg_tag: 'w-full h-full object-center object-cover group-hover:opacity-75' }}
+            {%- endif -%}
+          </div>
+          <h3 class="mt-4 text-sm text-gray-700">{{ product.title }}</h3>
+          <p class="mt-1 text-lg font-medium text-gray-900">{{ product.price | money }}</p>
+        </a>
+      {%- else -%}
+        <div class="col-span-full text-center py-12">
+          <p class="text-gray-500">No products found in this collection</p>
         </div>
-      {% endif %}
-    </header>
-
-    <div class="flex flex-col lg:flex-row gap-8">
-      <!-- Filters -->
-      <div class="lg:w-64">
-        <div class="sticky top-4">
-          <h2 class="text-lg font-bold mb-4">Filters</h2>
-          
-          {% for filter in collection.filters %}
-            <div class="mb-6">
-              <h3 class="font-medium mb-2">{{ filter.label }}</h3>
-              
-              <div class="space-y-2">
-                {% case filter.type %}
-                  {% when 'boolean' or 'list' %}
-                    {% for value in filter.values %}
-                      <label class="flex items-center">
-                        <input
-                          type="checkbox"
-                          name="{{ value.param_name }}"
-                          value="{{ value.value }}"
-                          {% if value.active %}checked{% endif %}
-                          class="mr-2"
-                        >
-                        {{ value.label }} ({{ value.count }})
-                      </label>
-                    {% endfor %}
-                  
-                  {% when 'price_range' %}
-                    <div class="flex gap-2">
-                      <input
-                        type="number"
-                        name="{{ filter.min_value.param_name }}"
-                        value="{{ filter.min_value.value }}"
-                        placeholder="Min"
-                        class="w-full border border-gray-300 rounded px-2 py-1"
-                      >
-                      <input
-                        type="number"
-                        name="{{ filter.max_value.param_name }}"
-                        value="{{ filter.max_value.value }}"
-                        placeholder="Max"
-                        class="w-full border border-gray-300 rounded px-2 py-1"
-                      >
-                    </div>
-                {% endcase %}
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-      </div>
-
-      <!-- Products -->
-      <div class="flex-1">
-        {% if collection.products.size > 0 %}
-          <!-- Sort -->
-          <div class="flex justify-end mb-8">
-            <select class="border border-gray-300 rounded-lg px-4 py-2">
-              {% for sort_option in collection.sort_options %}
-                <option 
-                  value="{{ sort_option.value }}"
-                  {% if sort_option.value == collection.sort_by %}selected{% endif %}
-                >
-                  {{ sort_option.name }}
-                </option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- Product Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {% for product in collection.products %}
-              {% render 'product-card', product: product %}
-            {% endfor %}
-          </div>
-
-          <!-- Pagination -->
-          {% if paginate.pages > 1 %}
-            <div class="mt-12 flex justify-center gap-2">
-              {% if paginate.previous %}
-                <a href="{{ paginate.previous.url }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                  Previous
-                </a>
-              {% endif %}
-
-              {% for part in paginate.parts %}
-                {% if part.is_link %}
-                  <a href="{{ part.url }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                    {{ part.title }}
-                  </a>
-                {% else %}
-                  <span class="px-4 py-2 border border-primary bg-primary text-white rounded-lg">
-                    {{ part.title }}
-                  </span>
-                {% endif %}
-              {% endfor %}
-
-              {% if paginate.next %}
-                <a href="{{ paginate.next.url }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                  Next
-                </a>
-              {% endif %}
-            </div>
-          {% endif %}
-        {% else %}
-          <div class="text-center py-12">
-            <p class="text-lg text-gray-600">No products found in this collection.</p>
-          </div>
-        {% endif %}
-      </div>
+      {%- endfor -%}
     </div>
-  </div>
+
+    {%- if paginate.pages > 1 -%}
+      <nav class="mt-12 flex items-center justify-center" role="navigation">
+        {%- if paginate.previous -%}
+          <a href="{{ paginate.previous.url }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Previous
+          </a>
+        {%- endif -%}
+
+        <span class="relative z-0 inline-flex shadow-sm rounded-md mx-4">
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                {{ part.title }}
+              </a>
+            {%- else -%}
+              <span class="relative inline-flex items-center px-4 py-2 border border-primary bg-primary text-sm font-medium text-white">
+                {{ part.title }}
+              </span>
+            {%- endif -%}
+          {%- endfor -%}
+        </span>
+
+        {%- if paginate.next -%}
+          <a href="{{ paginate.next.url }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Next
+          </a>
+        {%- endif -%}
+      </nav>
+    {%- endif -%}
+  {%- endpaginate -%}
 </div>
 
 {% schema %}
