@@ -11,8 +11,7 @@
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
     {%- endif -%}
 
-    <title>{{ page_title | default: "Lumora - Smart Family Display" }}</title>
-    
+    <title>{{ page_title | escape }}</title>
     {% if page_description %}
       <meta name="description" content="{{ page_description | escape }}">
     {% endif %}
@@ -22,25 +21,34 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Base CSS -->
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    
     <!-- Theme CSS -->
-    {{ 'tailwind.css' | asset_url | stylesheet_tag }}
     {{ 'theme.css' | asset_url | stylesheet_tag }}
 
     <!-- Theme Scripts -->
-    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+    <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
 
     <!-- Shopify-specific -->
     {{ content_for_header }}
   </head>
 
-  <body class="bg-[#F9F7F4]">
-    {% section 'announcement-bar' %}
-    {% section 'header' %}
+  <body class="gradient">
+    <div id="shopify-section-announcement" class="shopify-section">
+      {% section 'announcement-bar' %}
+    </div>
 
-    <main role="main" id="MainContent">
+    <div id="shopify-section-header" class="shopify-section">
+      {% section 'header' %}
+    </div>
+
+    <main role="main" id="MainContent" class="content-for-layout focus-none">
       {{ content_for_layout }}
     </main>
 
-    {% section 'footer' %}
+    <div id="shopify-section-footer" class="shopify-section">
+      {% section 'footer' %}
+    </div>
   </body>
 </html> 
